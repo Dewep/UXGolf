@@ -1,0 +1,17 @@
+{
+  "go.buildTags": "js,wasm",
+  "go.toolsEnvVars": {
+    "GOARCH": "wasm",
+    "GOOS": "js",
+  },
+  "go.testEnvVars": {
+    "GOARCH": "wasm",
+    "GOOS": "js",
+  },
+  "go.testTags": "js,wasm",
+  "go.installDependenciesWhenBuilding": false,
+  "editor.detectIndentation": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.formatOnSave": false
+}
