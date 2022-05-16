@@ -5,7 +5,6 @@ Golf application for scoring your matches, with GPS positions.
 ## TODO
 
 - Back, http-server
-  - List matches
   - Serve courses
 - Design
   - Pulnoy course SVG holes 10 to 18
