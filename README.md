@@ -4,9 +4,6 @@ Golf application for scoring your matches, with GPS positions.
 
 ## TODO
 
-- Admin Sys
-  - Dewep Sub-Domain
-  - HTTPS
 - Back, http-server
   - Save match
   - Load match

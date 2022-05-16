@@ -1,0 +1,22 @@
+[Unit]
+Description=UXGolf
+
+[Service]
+Type=simple
+ExecStart=/usr/local/go/bin/go run main.go
+WorkingDirectory=/srv/UXGolf/server/
+
+LimitNOFILE=infinity
+LimitCORE=infinity
+
+StandardInput=null
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+RestartSec=10
+
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
