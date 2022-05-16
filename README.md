@@ -8,8 +8,6 @@ Golf application for scoring your matches, with GPS positions.
   - Dewep Sub-Domain
   - HTTPS
 - Back, http-server
-  - Base http server
-  - Serve static files
   - Save match
   - Load match
   - List matches
