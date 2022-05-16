@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "UXGolf",
+  "scope": "https://uxgolf.dewep.net/",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "Golf application for scoring your matches.",
+  "icons": [{
+    "src": "https://uxgolf.dewep.net/favicon.ico",
+    "sizes": "32x32"
+  }]
+}
