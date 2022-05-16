@@ -5,14 +5,13 @@ Golf application for scoring your matches, with GPS positions.
 ## TODO
 
 - Back, http-server
-  - Save match
-  - Load match
   - List matches
   - Serve courses
 - Design
   - Pulnoy course SVG holes 10 to 18
   - Icons
 - Front application
+  - Implement back serve/load matches
   - Display current position, on the map
   - Add number of points in the same location, on the map
   - Do not display distance if too far away
