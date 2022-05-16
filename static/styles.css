@@ -42,6 +42,21 @@ body {
 .icon-arrow-right::before {
   transform: translate(-75%,-50%) rotate(135deg);
 }
+.loading::after {
+  content: "";
+  display: block;
+  animation: loading .5s infinite linear;
+  border: 0.2rem solid #ffffff;
+  border-radius: 50%;
+  border-right-color: transparent;
+  border-top-color: transparent;
+  height: 0.7rem;
+  width: 0.7rem;
+}
+@keyframes loading {
+  0% { transform: rotate(0)}
+  100% { transform: rotate(360deg) }
+}
 .btn {
   appearance: none;
   background: #0f4706e6;
@@ -71,8 +86,15 @@ header {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  top: 0;
 }
-header .icon {
+#app {
+  padding-top: 3.2rem;
+}
+header .icon, header .loading {
   position: absolute;
   top: 1.2rem;
   font-size: 1rem;
@@ -207,6 +229,14 @@ section.selection > a .icon {
   right: 1rem;
   font-size: 2rem;
   padding: 1.2rem;
+}
+section.selection > a.server {
+  font-size: 80%;
+  background: #f5f5f5;
+}
+section.selection > a.server .icon {
+  font-size: 1.6rem;
+  top: .7rem;
 }
 section.course-detail {
   padding: 1rem;

@@ -6,6 +6,10 @@ export default {
       coursesData: [...pulnoyCourses],
       matchesData: JSON.parse(localStorage.matches || '[]'),
 
+      loading: false,
+      serverMatches: [],
+      serverMatchesSlugs: [],
+
       courseSelection: false,
 
       matchSlug: null,
@@ -18,21 +22,45 @@ export default {
 
   computed: {
     matches () {
-      return this.matchesData.map(match => {
+      const matches = []
+
+      const addMatch = (match, server = false) => {
         const date = new Date(match.date).toLocaleString('fr-FR', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })
         const course = this.coursesData.find(course => course.slug === match.course)
-        const starter = course.starters.find(starter => starter.slug === match.starter)
-        return {
-          slug: match.date,
+        const starter = course?.starters?.find(starter => starter.slug === match.starter)
+        matches.push({
+          server,
+          slug: match.slug || match.date,
           title: `${date} - ${match.player} (${match.index})`,
-          subtitle: `${course.name} - ${starter.name} - ${match.strokes.length} strokes`
-        }
-      })
+          subtitle: `${course?.name || 'N/A'} - ${starter?.name || 'N/A'} - ${match.strokes.length} strokes`
+        })
+      }
+
+      for (const match of this.matchesData) {
+        addMatch(match, false)
+      }
+
+      for (const match of this.serverMatches) {
+        addMatch(match, true)
+      }
+
+      return matches
     },
 
-    match () {
+    localMatch () {
       return this.matchesData.find(match => match.date === this.matchSlug)
     },
+    serverMatch () {
+      const serverMatch = this.serverMatches.find(match => match.slug === this.matchSlug)
+      if (serverMatch && serverMatch.course) {
+        return serverMatch
+      }
+      return null
+    },
+    match () {
+      return this.localMatch || this.serverMatch
+    },
+
     matchTitle () {
       const date = new Date(this.match.date).toLocaleString('fr-FR', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })
       return `${date} - ${this.match.player} (${this.match.index})`
@@ -150,6 +178,8 @@ export default {
   },
 
   mounted () {
+    this.loadServerMatches()
+
     const importMatchData = window.location.hash.match(/^#import\/(.+)$/)
     if (importMatchData) {
       this.importMatchData(importMatchData[1])
@@ -162,24 +192,6 @@ export default {
       window.location.hash = ''
     }
 
-    if (window.localStorage.strokes) {
-      const strokes = JSON.parse(window.localStorage.strokes)
-      if (strokes.length) {
-        const match = {
-          date: strokes[0].date,
-          player: 'Dewep',
-          index: 54,
-          course: '54425-pulnoy-18t',
-          starter: 'blue-men',
-          strokes
-        }
-        this.matchesData.unshift(match)
-        this.matchSlug = match.date
-        this.saveLocalStorage()
-      }
-      delete window.localStorage.strokes
-    }
-
     if (window.location.protocol === 'https:') {
       this.watchLocation()
     }
@@ -189,7 +201,79 @@ export default {
     }
   },
 
+  watch: {
+    matchSlug: {
+      handler () {
+        if (this.matchSlug && !this.match) {
+          this.loadMatch(this.matchSlug)
+        }
+      },
+      immediate: true
+    }
+  },
+
   methods: {
+    async loadServerMatches () {
+      try {
+        this.loading = true
+
+        const response = await fetch('/matches/')
+        const json = await response.json()
+
+        this.serverMatches = []
+
+        for (const matchSlug of json.matches) {
+          if (!matchSlug) { // null at the end of the list
+            continue
+          }
+          if (this.serverMatches.find(match => match.slug === matchSlug)) {
+            continue
+          }
+          this.serverMatchesSlugs.push(matchSlug)
+          this.serverMatches.push({
+            slug: matchSlug,
+            date: window.atob(matchSlug),
+            player: 'Unknown',
+            index: 54,
+            course: null,
+            starter: null,
+            strokes: []
+          })
+        }
+
+        this.serverMatchesSlugs = json.matches
+      } catch (error) {
+        console.warn('Cannot load server matches', error.message)
+      }
+
+      this.loading = false
+    },
+
+    async loadMatch (matchSlug) {
+      try {
+        this.loading = true
+
+        const response = await fetch(`/matches/load/${matchSlug}.json`)
+        const match = await response.json()
+
+        this.serverMatches = this.serverMatches.filter(serverMatch => serverMatch.slug !== matchSlug)
+        this.serverMatches.push({
+          slug: matchSlug,
+          server: true,
+          ...match
+        })
+
+        if (!this.serverMatchesSlugs.includes(matchSlug)) {
+          this.serverMatchesSlugs.push(matchSlug)
+        }
+      } catch (error) {
+        console.warn('Cannot load server matches', error.message)
+        this.matchSlug = null
+      }
+
+      this.loading = false
+    },
+
     watchLocation () {
       navigator.geolocation.watchPosition(position => {
         this.currentPosLat = position.coords.latitude

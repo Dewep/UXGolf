@@ -1,16 +1,24 @@
 <header v-if="courseSelection" @click.prevent="courseSelection = false">
-  <span class="icon icon-arrow-left"></span>
+  <span v-if="loading" class="loading"></span>
+  <span v-else class="icon icon-arrow-left"></span>
   Course selection
 </header>
 <header v-else-if="match && hole" @click.prevent="hole = null">
-  <span class="icon icon-arrow-left"></span>
+  <span v-if="loading" class="loading"></span>
+  <span v-else class="icon icon-arrow-left"></span>
   {{ matchTitle }}
 </header>
 <header v-else-if="match" @click.prevent="matchSlug = null">
-  <span class="icon icon-arrow-left"></span>
+  <span v-if="loading" class="loading"></span>
+  <span v-else class="icon icon-arrow-left"></span>
   {{ matchTitle }}
 </header>
+<header v-else-if="matchSlug" @click.prevent="matchSlug = null">
+  <span v-if="loading" class="loading"></span>
+  Loading match...
+</header>
 <header v-else>
+  <span v-if="loading" class="loading"></span>
   UXGolf
 </header>
 
@@ -25,11 +33,11 @@
 </section>
 
 <template v-else-if="!match">
-  <section class="selection">
+  <section v-if="!matchSlug" class="selection">
     <div>
       <a class="btn" @click="courseSelection = true">New match</a>
     </div>
-    <a v-for="matchItem in matches" :key="matchItem.slug" @click.prevent="matchSlug = matchItem.slug">
+    <a v-for="matchItem in matches" :key="matchItem.slug" :class="{ server: matchItem.server }" @click.prevent="matchSlug = matchItem.slug">
       <span class="icon icon-arrow-right"></span>
       <b>{{ matchItem.title }}</b><br>
       <small>{{ matchItem.subtitle }}</small>
@@ -82,7 +90,7 @@
 
   <section v-if="hole && currentSummary.net < 2" class="actions">
     <em>{{ currentDistance }}m</em>
-    <a class="btn" @click="newStroke()">Add a new stroke</a>
+    <a v-if="localMatch" class="btn" @click="newStroke()">Add a new stroke</a>
   </section>
 
   <section v-if="hole && svgData" class="svg">
@@ -108,7 +116,7 @@
         {{ stroke.label }}
         <sup v-if="stroke.green">green</sup>
         <sup v-else-if="stroke.distance">{{ stroke.distance }}m</sup>
-        <small>
+        <small v-if="localMatch">
           <span>
             <a @click.prevent="updateStrokeGps(stroke, 'lat', -1)">-</a>
             Lat
