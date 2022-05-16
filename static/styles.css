@@ -1,0 +1,239 @@
+html, body, #app {
+  margin: 0;
+  font-family: "Segoe UI", verdana;
+}
+html {
+  font-size: 20px;
+}
+body {
+  font-size: .8rem;
+  background: #FFF;
+  color: #3B4351;
+}
+.icon {
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: inherit;
+  font-style: normal;
+  height: 1em;
+  position: relative;
+  text-indent: -9999px;
+  vertical-align: middle;
+  width: 1em;
+}
+.icon::after, .icon::before {
+  content: "";
+  display: block;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
+.icon-arrow-left::before, .icon-arrow-right::before {
+  border: 0.2rem solid currentColor;
+  border-bottom: 0;
+  border-right: 0;
+  height: 0.65em;
+  width: 0.65em;
+}
+.icon-arrow-left::before {
+  transform: translate(-25%,-50%) rotate(-45deg);
+}
+.icon-arrow-right::before {
+  transform: translate(-75%,-50%) rotate(135deg);
+}
+.btn {
+  appearance: none;
+  background: #0f4706e6;
+  color: #fff;
+  border: 0.05rem solid #0f4706;
+  border-radius: 0.1rem;
+  cursor: pointer;
+  display: inline-block;
+  outline: 0;
+  padding: 0.45rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.btn:focus, .btn:hover, .btn:active, .btn.active {
+  background: #0f4706cc;
+}
+header {
+  padding: .6rem 1rem .6rem 2.2rem;
+  background: #0E4706;
+  color: #FFF;
+  font-weight: bold;
+  font-size: 1.5rem;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+header .icon {
+  position: absolute;
+  top: 1.2rem;
+  font-size: 1rem;
+  left: .6rem;
+}
+nav {
+  display: flex;
+  border-bottom: .1rem solid #EEE;
+}
+nav > .arrow {
+  flex: 0 0 auto;
+  cursor: pointer;
+  font-size: 2rem;
+  padding: 1.5rem 1rem;
+}
+nav > .content {
+  flex: 1 1 auto;
+  text-align: center;
+  clear: both;
+  padding: 1rem 0;
+}
+nav > .content > h2 {
+  margin: 0;
+  font-size: .8rem;
+  color: #777;
+}
+nav > .content > .content-left, nav > .content > .content-right {
+  float: left;
+  width: calc(50% - 2rem);
+  padding: 0 1rem;
+  font-size: 1.5rem;
+  text-align: right;
+}
+nav > .content > .content-right {
+  text-align: left;
+}
+nav .btn {
+  margin-top: 0.5rem;
+}
+section.summary-hole {
+  display: flex;
+  padding: 1rem 2rem;
+  font-size: 1.7rem;
+  font-weight: bold;
+}
+section.summary-hole > div {
+  flex: 1 1 auto;
+  text-align: left;
+}
+section.summary-hole > div.right {
+  text-align: right;
+}
+section.actions {
+  text-align: center;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+section.actions em {
+  display: block;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 3rem;
+  margin-bottom: 2rem;
+}
+section.details {
+  padding: 0 2rem;
+}
+section.details ol li {
+  padding: 0.3rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-bottom: .05rem solid #f5f5f5;
+  position: relative;
+}
+section.details ol li small {
+  position: absolute;
+  right: 0;
+  bottom: 0.3rem;
+}
+section.details ol li small span {
+  margin-left: 0.5rem;
+  background: #dff1dc;
+  border-radius: 1rem;
+  height: 1.3rem;
+  display: inline-block;
+}
+section.details ol li small span a {
+  background: #dce3da;
+  display: inline-block;
+  width: 1.3rem;
+  text-align: center;
+  border-radius: 1rem;
+  height: 1.3rem;
+  font-weight: bold;
+}
+section.summary-global {
+  padding: 1rem 2rem;
+  border-bottom: .1rem solid #EEE;
+  text-align: center;
+}
+section.summary-global h2 {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+}
+section.summary-global table {
+  width: 100%;
+  text-align: center;
+}
+section.summary-global table th {
+  width: 16.66%;
+}
+section.selection {
+  text-align: center;
+}
+section.selection .btn {
+  margin: 1rem 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+section.selection > a {
+  padding: 1rem 3rem 1rem 1rem;
+  border-bottom: .1rem solid #EEE;
+  position: relative;
+  display: block;
+  text-align: left;
+  font-size: 1rem;
+  cursor: pointer;
+}
+section.selection > a .icon {
+  position: absolute;
+  right: 1rem;
+  font-size: 2rem;
+  padding: 1.2rem;
+}
+section.course-detail {
+  padding: 1rem;
+  cursor: pointer;
+  border-bottom: .1rem solid #EEE;
+  text-align: center;
+}
+section.course-detail h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+section.course-detail span {
+  margin: 0 1rem;
+  word-break: keep-all;
+  display: inline-block;
+}
+section.export {
+  text-align: center;
+  font-size: .6rem;
+  padding: 2rem;
+}
+section.export .btn {
+  margin: 0 1rem;
+}
+section.svg svg {
+  width: 100%;
+  max-height: 80vh;
+  background: #dce3da;
+  margin: 0 auto;
+}

@@ -10,6 +10,7 @@ Golf application for scoring your matches, with GPS positions.
   - Pulnoy course SVG holes 10 to 18
   - Icons
 - Front application
+  - Update Player name + Index
   - Implement back serve/load matches
   - Display current position, on the map
   - Add number of points in the same location, on the map
@@ -17,7 +18,6 @@ Golf application for scoring your matches, with GPS positions.
   - Ensure better GPS position after phone pause/lock (wait few seconds?)
   - Selection start color in a second menu
   - Server courses from back
-  - Multiple files (JS/CSS)
 - PWA
   - Improve manifests
   - Force to download PWA to use it

@@ -1,0 +1,180 @@
+<header v-if="courseSelection" @click.prevent="courseSelection = false">
+  <span class="icon icon-arrow-left"></span>
+  Course selection
+</header>
+<header v-else-if="match && hole" @click.prevent="hole = null">
+  <span class="icon icon-arrow-left"></span>
+  {{ matchTitle }}
+</header>
+<header v-else-if="match" @click.prevent="matchSlug = null">
+  <span class="icon icon-arrow-left"></span>
+  {{ matchTitle }}
+</header>
+<header v-else>
+  UXGolf
+</header>
+
+<section v-if="courseSelection" class="selection">
+  <template v-for="courseItem in coursesData">
+    <a v-for="starterItem in courseItem.starters" :key="courseItem.slug + '/' + starterItem.slug" @click.prevent="selectCourse(courseItem, starterItem)">
+      <span class="icon icon-arrow-right"></span>
+      <b>{{ courseItem.name }}</b><br>
+      <small>{{ starterItem.name }}</small>
+    </a>
+  </template>
+</section>
+
+<template v-else-if="!match">
+  <section class="selection">
+    <div>
+      <a class="btn" @click="courseSelection = true">New match</a>
+    </div>
+    <a v-for="matchItem in matches" :key="matchItem.slug" @click.prevent="matchSlug = matchItem.slug">
+      <span class="icon icon-arrow-right"></span>
+      <b>{{ matchItem.title }}</b><br>
+      <small>{{ matchItem.subtitle }}</small>
+    </a>
+  </section>
+</template>
+
+<template v-else>
+  <nav @click.prevent="hole = null">
+    <div class="content">
+      <h2>Your score</h2>
+      <div class="content-left">
+        Brut {{ summary.total.brut }}
+      </div>
+      <div class="content-right">
+        Net {{ summary.total.net > 0 ? "+" : "" }}{{ summary.total.net }}
+      </div>
+    </div>
+  </nav>
+
+  <nav>
+    <div class="arrow" @click.prevent="prevHole()">
+      <span class="icon icon-arrow-left"></span>
+    </div>
+    <div v-if="hole" class="content">
+      <h2>Hole {{ hole }}</h2>
+      <div class="content-left">
+        Par {{ currentHole.par }}
+      </div>
+      <div class="content-right">
+        CR {{ cr[hole - 1] }}
+      </div>
+    </div>
+    <div v-else class="content">
+      <a class="btn" @click.prevent="hole = nextHoleNumber">Go to the hole {{ nextHoleNumber }}</a>
+    </div>
+    <div class="arrow" @click.prevent="nextHole()">
+      <span class="icon icon-arrow-right"></span>
+    </div>
+  </nav>
+
+  <section v-if="currentSummary" class="summary-hole">
+    <div class="left">
+      Brut +{{ currentSummary.brut }}
+    </div>
+    <div class="right">
+      Net {{ currentSummary.net > 0 ? "+" : "" }}{{ currentSummary.net }}
+    </div>
+  </section>
+
+  <section v-if="hole && currentSummary.net < 2" class="actions">
+    <em>{{ currentDistance }}m</em>
+    <a class="btn" @click="newStroke()">Add a new stroke</a>
+  </section>
+
+  <section v-if="hole && svgData" class="svg">
+    <svg viewBox="0 0 400 700">
+      <rect width="400" height="700" fill="#DCE3DA"/>
+      <path v-for="(path, index) in svgData.course" :key="index" :d="path.d" :transform="path.transform" fill="#dff1dc" />
+      <path v-for="(path, index) in svgData.fairway" :key="index" :d="path.d" :transform="path.transform" fill="#9dc592" />
+      <path v-for="(path, index) in svgData.water" :key="index" :d="path.d" :transform="path.transform" fill="#3EB6D5" />
+      <path v-for="(path, index) in svgData.sand" :key="index" :d="path.d" :transform="path.transform" fill="#e8b85a" />
+      <path v-for="(path, index) in svgData.green" :key="index" :d="path.d" :transform="path.transform" fill="#3ed59d" />
+      <line v-for="(line, index) in svgData.lines" :key="index" :x1="line.x1" :y1="line.y1" :x2="line.x2" :y2="line.y2" fill="none" stroke="#111" stroke-width="1" stroke-dasharray="2 2" />
+      <g v-for="(circle, index) in svgData.circles" :key="index" :transform="`translate(${circle.x} ${circle.y})`" fill="#ff0955" stroke="#111" stroke-width="2">
+        <circle cx="5" cy="5" r="5" stroke="none"/>
+        <circle cx="5" cy="5" r="4" fill="none"/>
+      </g>
+      <text v-for="(text, index) in svgData.texts" :key="index" :x="text.x" :y="text.y" font-size="10">{{ text.text }}</text>
+    </svg>
+  </section>
+
+  <section v-if="hole" class="details">
+    <ol>
+      <li v-for="(stroke, index) in currentStrokes" :key="index">
+        {{ stroke.label }}
+        <sup v-if="stroke.green">green</sup>
+        <sup v-else-if="stroke.distance">{{ stroke.distance }}m</sup>
+        <small>
+          <span>
+            <a @click.prevent="updateStrokeGps(stroke, 'lat', -1)">-</a>
+            Lat
+            <a @click.prevent="updateStrokeGps(stroke, 'lat', 1)">+</a>
+          </span>
+          <span>
+            <a @click.prevent="updateStrokeGps(stroke, 'lng', -1)">-</a>
+            Lng
+            <a @click.prevent="updateStrokeGps(stroke, 'lng', 1)">+</a>
+          </span>
+        </small>
+      </li>
+    </ol>
+  </section>
+
+  <section v-if="!hole" class="summary-global">
+    <h2>Match index: {{ summary.total.index }}</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Hole</th>
+          <th>Par</th>
+          <th>Hcp</th>
+          <th>CR</th>
+          <th>Brut</th>
+          <th>Net</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(hole, index) in summary.holes" :key="index">
+          <td>{{ index + 1 }}</td>
+          <td>{{ hole.par }}</td>
+          <td>{{ hole.hcp }}</td>
+          <td>{{ cr[index] }}</td>
+          <template v-if="hole.played">
+            <td>{{ hole.brut }}</td>
+            <td>{{ hole.net }}</td>
+          </template>
+          <template v-else>
+            <td colspan="2"><small><i>Not played</i></small></td>
+          </template>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section v-if="!hole" class="course-detail" @click.prevent="courseSelection = true">
+    <h2>{{ course.name }}</h2>
+    <span><b>Player</b> {{ match.player }}</span>
+    <span><b>Index</b> {{ match.index }}</span>
+    <span><b>Starter</b> {{ starter.name }}</span>
+    <span><b>Par</b> {{ coursePar }}</span>
+    <span><b>Handicap</b> {{ handicap }}</span>
+    <span><b>SSS</b> {{ starter.sss }}</span>
+    <span><b>Slope</b> {{ starter.slope }}</span>
+  </section>
+
+  <section v-if="!hole" class="export">
+    <a class="btn" @click.prevent="copyToExport()">
+      Export big link
+    </a>
+    <a class="btn" @click.prevent="copyToExport(true)">
+      Export JSON
+    </a>
+    <a class="btn" @click.prevent="deleteMatch()">
+      Delete match
+    </a>
+  </section>
+</template>
