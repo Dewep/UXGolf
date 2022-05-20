@@ -11,7 +11,7 @@ import (
 )
 
 func importMatch (w http.ResponseWriter, r *http.Request) {
-  slugValidation := regexp.MustCompile(`^[A-Za-z]{20,50}$`).MatchString
+  slugValidation := regexp.MustCompile(`^[A-Za-z0-9]{20,50}$`).MatchString
 
   vars := mux.Vars(r)
   slug := vars["slug"]
