@@ -37,7 +37,7 @@
     <div>
       <a class="btn" @click="courseSelection = true">New match</a>
     </div>
-    <a v-for="matchItem in matches" :key="matchItem.slug" :class="{ server: matchItem.server }" @click.prevent="matchSlug = matchItem.slug">
+    <a v-for="matchItem in matches" :key="matchItem.slug" :class="{ remote: matchItem.remote }" @click.prevent="matchSlug = matchItem.slug">
       <span class="icon icon-arrow-right"></span>
       <b>{{ matchItem.title }}</b><br>
       <small>{{ matchItem.subtitle }}</small>
@@ -90,7 +90,7 @@
 
   <section v-if="hole && currentSummary.net < 2" class="actions">
     <em>{{ currentDistance }}m</em>
-    <a v-if="localMatch" class="btn" @click="newStroke()">Add a new stroke</a>
+    <a v-if="localMatch" :class="{ disabled: loading }" class="btn" @click="newStroke()">Add a new stroke</a>
   </section>
 
   <section v-if="hole && svgData" class="svg">
@@ -116,7 +116,7 @@
         {{ stroke.label }}
         <sup v-if="stroke.green">green</sup>
         <sup v-else-if="stroke.distance">{{ stroke.distance }}m</sup>
-        <small v-if="localMatch">
+        <small v-if="localMatch" :class="{ disabled: loading }">
           <span>
             <a @click.prevent="updateStrokeGps(stroke, 'lat', -1)">-</a>
             Lat
@@ -174,15 +174,24 @@
     <span><b>Slope</b> {{ starter.slope }}</span>
   </section>
 
-  <section v-if="!hole" class="export">
-    <a class="btn" @click.prevent="copyToExport()">
-      Export big link
+  <section v-if="!hole" :class="{ disabled: loading }" class="export">
+    <a class="btn" v-if="!localMatch" @click.prevent="importRemoteMatch()">
+      Import remote match
     </a>
-    <a class="btn" @click.prevent="copyToExport(true)">
-      Export JSON
+    <a class="btn" v-if="localMatch && !remoteMatch" @click.prevent="createRemoteMatch()">
+      Create remote match
     </a>
-    <a class="btn" @click.prevent="deleteMatch()">
-      Delete match
+    <a class="btn" v-if="localMatch && remoteMatch" @click.prevent="saveRemoteMatch()">
+      Save remote match
+    </a>
+    <a class="btn" v-if="localMatch && remoteMatch" @click.prevent="restoreRemoteMatch()">
+      Restore remote match
+    </a>
+    <a class="btn" v-if="localMatch && remoteMatch" @click.prevent="removeLocalMatch()">
+      Remove local match
+    </a>
+    <a class="btn" v-if="localMatch && !remoteMatch" @click.prevent="permanentlyDeleteMatch()">
+      Permanently delete match
     </a>
   </section>
 </template>

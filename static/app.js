@@ -7,8 +7,7 @@ export default {
       matchesData: JSON.parse(localStorage.matches || '[]'),
 
       loading: false,
-      serverMatches: [],
-      serverMatchesSlugs: [],
+      remoteMatches: [],
 
       courseSelection: false,
 
@@ -24,12 +23,12 @@ export default {
     matches () {
       const matches = []
 
-      const addMatch = (match, server = false) => {
+      const addMatch = (match, remote = false) => {
         const date = new Date(match.date).toLocaleString('fr-FR', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })
         const course = this.coursesData.find(course => course.slug === match.course)
         const starter = course?.starters?.find(starter => starter.slug === match.starter)
         matches.push({
-          server,
+          remote,
           slug: match.slug || match.date,
           title: `${date} - ${match.player} (${match.index})`,
           subtitle: `${course?.name || 'N/A'} - ${starter?.name || 'N/A'} - ${match.strokes.length} strokes`
@@ -40,25 +39,27 @@ export default {
         addMatch(match, false)
       }
 
-      for (const match of this.serverMatches) {
-        addMatch(match, true)
+      for (const match of this.remoteMatches) {
+        if (!matches.find(m => m.slug === match.slug)) {
+          addMatch(match, true)
+        }
       }
 
       return matches
     },
 
     localMatch () {
-      return this.matchesData.find(match => match.date === this.matchSlug)
+      return this.matchesData.find(match => match.slug === this.matchSlug || match.date === this.matchSlug)
     },
-    serverMatch () {
-      const serverMatch = this.serverMatches.find(match => match.slug === this.matchSlug)
-      if (serverMatch && serverMatch.course) {
-        return serverMatch
+    remoteMatch () {
+      const remoteMatch = this.remoteMatches.find(match => match.slug === this.matchSlug)
+      if (remoteMatch && remoteMatch.course) {
+        return remoteMatch
       }
       return null
     },
     match () {
-      return this.localMatch || this.serverMatch
+      return this.localMatch || this.remoteMatch
     },
 
     matchTitle () {
@@ -178,19 +179,7 @@ export default {
   },
 
   mounted () {
-    this.loadServerMatches()
-
-    const importMatchData = window.location.hash.match(/^#import\/(.+)$/)
-    if (importMatchData) {
-      this.importMatchData(importMatchData[1])
-      window.location.hash = ''
-    }
-
-    const importMatchJsonFile = window.location.hash.match(/^#import-match\/(.+)$/)
-    if (importMatchJsonFile) {
-      this.importMatchJsonFile(importMatchJsonFile[1])
-      window.location.hash = ''
-    }
+    this.loadRemoteMatches()
 
     if (window.location.protocol === 'https:') {
       this.watchLocation()
@@ -204,7 +193,10 @@ export default {
   watch: {
     matchSlug: {
       handler () {
-        if (this.matchSlug && !this.match) {
+        if (!this.matchSlug) {
+          return
+        }
+        if (!this.match || (this.match.slug && !this.remoteMatch)) {
           this.loadMatch(this.matchSlug)
         }
       },
@@ -213,24 +205,23 @@ export default {
   },
 
   methods: {
-    async loadServerMatches () {
+    async loadRemoteMatches () {
       try {
         this.loading = true
 
         const response = await fetch('/matches/')
         const json = await response.json()
 
-        this.serverMatches = []
+        this.remoteMatches = []
 
         for (const matchSlug of json.matches) {
           if (!matchSlug) { // null at the end of the list
             continue
           }
-          if (this.serverMatches.find(match => match.slug === matchSlug)) {
+          if (this.remoteMatches.find(match => match.slug === matchSlug)) {
             continue
           }
-          this.serverMatchesSlugs.push(matchSlug)
-          this.serverMatches.push({
+          this.remoteMatches.push({
             slug: matchSlug,
             date: window.atob(matchSlug),
             player: 'Unknown',
@@ -240,10 +231,8 @@ export default {
             strokes: []
           })
         }
-
-        this.serverMatchesSlugs = json.matches
       } catch (error) {
-        console.warn('Cannot load server matches', error.message)
+        console.warn('Cannot load remote matches', error.message)
       }
 
       this.loading = false
@@ -256,18 +245,13 @@ export default {
         const response = await fetch(`/matches/load/${matchSlug}.json`)
         const match = await response.json()
 
-        this.serverMatches = this.serverMatches.filter(serverMatch => serverMatch.slug !== matchSlug)
-        this.serverMatches.push({
+        this.remoteMatches = this.remoteMatches.filter(remoteMatch => remoteMatch.slug !== matchSlug)
+        this.remoteMatches.push({
           slug: matchSlug,
-          server: true,
           ...match
         })
-
-        if (!this.serverMatchesSlugs.includes(matchSlug)) {
-          this.serverMatchesSlugs.push(matchSlug)
-        }
       } catch (error) {
-        console.warn('Cannot load server matches', error.message)
+        console.warn('Cannot load remote matches', error.message)
         this.matchSlug = null
       }
 
@@ -437,39 +421,63 @@ export default {
       this.saveLocalStorage()
     },
 
-    copyToExport (jsonOnly = false) {
-      let content = JSON.stringify(this.match)
-      if (!jsonOnly) {
-        const exportData = encodeURIComponent(window.btoa(content))
-        content = window.location.href + '#import/' + exportData
-      }
-      navigator.clipboard.writeText(content)
-    },
-    importMatchData (data) {
-      try {
-        const match = JSON.parse(atob(decodeURIComponent(data)))
-        this.importMatch(match)
-      } catch (err) {
-        console.warn('Error importing matchData', err)
-      }
-    },
-    async importMatchJsonFile (slug) {
-      try {
-        const response = await fetch(`./matches/${slug}.json`)
-        const match = await response.json()
-        this.importMatch(match)
-      } catch (err) {
-        console.warn('Error importing matchJsonFile', err)
-      }
-    },
-    importMatch (match) {
-      this.matchesData = this.matchesData.filter(match => match.date !== match.date)
-      this.matchesData.unshift(match)
-      this.matchSlug = match.date
+    importRemoteMatch () {
+      this.matchesData.unshift(this.match)
       this.saveLocalStorage()
     },
+    async createRemoteMatch () {
+      this.saveRemoteMatch(true)
+    },
+    async saveRemoteMatch (creation = false) {
+      try {
+        this.loading = true
 
-    deleteMatch () {
+        if (!this.localMatch.slug && !creation) {
+          throw new Error('Couln\'t save match without slug')
+        }
+        const match = {
+          slug: this.localMatch.slug || window.btoa(this.localMatch.date),
+          ...this.localMatch
+        }
+
+        const jsonMatch = JSON.stringify(match)
+        await fetch(`/matches/import/${match.slug}/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: jsonMatch
+        })
+
+        this.remoteMatches = this.remoteMatches.filter(remoteMatch => remoteMatch.slug !== match.slug)
+        this.remoteMatches.push(JSON.parse(jsonMatch))
+
+        if (!this.localMatch.slug) {
+          this.localMatch.slug = match.slug
+          this.saveLocalStorage()
+        }
+      } catch (error) {
+        console.warn('Cannot save remote match', error.message)
+      }
+
+      this.loading = false
+    },
+    restoreRemoteMatch () {
+      if (!this.remoteMatch) {
+        return
+      }
+      this.matchesData = this.matchesData.filter(match => match.slug !== this.matchSlug)
+      this.matchesData.unshift(JSON.parse(JSON.stringify(this.remoteMatch)))
+      this.saveLocalStorage()
+    },
+    removeLocalMatch () {
+      if (!this.remoteMatch) {
+        return
+      }
+      this.matchesData = this.matchesData.filter(match => match.slug !== this.matchSlug)
+      this.saveLocalStorage()
+    },
+    permanentlyDeleteMatch () {
       this.matchesData = this.matchesData.filter(match => match.date !== this.matchSlug)
       this.matchSlug = null
       this.saveLocalStorage()

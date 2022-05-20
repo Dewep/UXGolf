@@ -57,6 +57,12 @@ body {
   0% { transform: rotate(0)}
   100% { transform: rotate(360deg) }
 }
+.disabled {
+  pointer-events: none;
+}
+.disabled > * {
+  opacity: 0.5;
+}
 .btn {
   appearance: none;
   background: #0f4706e6;
@@ -230,11 +236,11 @@ section.selection > a .icon {
   font-size: 2rem;
   padding: 1.2rem;
 }
-section.selection > a.server {
+section.selection > a.remote {
   font-size: 80%;
   background: #f5f5f5;
 }
-section.selection > a.server .icon {
+section.selection > a.remote .icon {
   font-size: 1.6rem;
   top: .7rem;
 }
