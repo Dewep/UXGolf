@@ -162,15 +162,19 @@ export default {
       const texts = []
 
       let lastPoint = null
-      let nbOfPointsInTheSamePosition = 0
+      let nbOfPointsInTheSamePosition = -1
       const circles = this.currentStrokes.map(stroke => {
+        nbOfPointsInTheSamePosition += 1
+
         const point = this.gpsToPoint(a, b, c, stroke.lat, stroke.lng)
+        if (!point) {
+          return null
+        }
 
         if (lastPoint) {
-          nbOfPointsInTheSamePosition += 1
-
           const distanceWithLastPoint = this.distancePoints(lastPoint.x, lastPoint.y, point.x, point.y)
           if (distanceWithLastPoint < 10) {
+            lastPoint.distance = stroke.distance
             return null
           }
 
@@ -196,11 +200,9 @@ export default {
           nbOfPointsInTheSamePosition = 0
         }
 
-        if (point) {
-          lastPoint = {
-            ...point,
-            distance: stroke.distance
-          }
+        lastPoint = {
+          ...point,
+          distance: stroke.distance
         }
 
         return { x: point.x - 5, y: point.y - 5 }
@@ -376,10 +378,11 @@ export default {
       const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d)
       const px = x1 + a * dx
       const py = y1 + a * dy
-      const h = Math.sqrt(r1 * r1 - a * a)
+      let h = Math.sqrt(r1 * r1 - a * a)
 
       if (isNaN(h)) {
-        return null
+        h = 0
+        console.warn('h is not a number', r1, a)
       }
 
       return {
