@@ -146,28 +146,62 @@ export default {
       const texts = []
 
       let lastPoint = null
+      let nbOfPointsInTheSamePosition = 0
       const circles = this.currentStrokes.map(stroke => {
         const point = this.gpsToPoint(a, b, c, stroke.lat, stroke.lng)
+
         if (lastPoint) {
+          nbOfPointsInTheSamePosition += 1
+
+          const distanceWithLastPoint = this.distancePoints(lastPoint.x, lastPoint.y, point.x, point.y)
+          if (distanceWithLastPoint < 10) {
+            return null
+          }
+
           lines.push({
             x1: lastPoint.x,
             y1: lastPoint.y,
             x2: point.x,
             y2: point.y
           })
+
+          const text = [
+            lastPoint.distance ? `${lastPoint.distance}m` : null,
+            nbOfPointsInTheSamePosition > 1 ? `(${nbOfPointsInTheSamePosition} strokes)` : null
+          ].filter(part => part).join(' ')
+          if (text) {
+            texts.push({
+              x: lastPoint.x + 10,
+              y: lastPoint.y + 4,
+              text
+            })
+          }
+
+          nbOfPointsInTheSamePosition = 0
         }
+
         if (point) {
-          lastPoint = point
+          lastPoint = {
+            ...point,
+            distance: stroke.distance
+          }
         }
-        if (stroke.distance) {
-          texts.push({
-            x: point.x + 10,
-            y: point.y + 4,
-            text: `${stroke.distance}m`
-          })
-        }
+
         return { x: point.x - 5, y: point.y - 5 }
       }).filter(point => point)
+
+      if (lastPoint && nbOfPointsInTheSamePosition > 0) {
+        texts.push({
+          x: lastPoint.x + 10,
+          y: lastPoint.y + 4,
+          text: `(${nbOfPointsInTheSamePosition + 1} strokes)`
+        })
+      }
+
+      const currentPosition = this.gpsToPoint(a, b, c, this.currentPosLat, this.currentPosLng)
+      if (currentPosition) {
+        circles.push({ x: currentPosition.x - 5, y: currentPosition.y - 5, stroke: '#0E4706', fill: '#FFF' })
+      }
 
       return {
         ...svg,

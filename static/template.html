@@ -102,7 +102,14 @@
       <path v-for="(path, index) in svgData.sand" :key="index" :d="path.d" :transform="path.transform" fill="#e8b85a" />
       <path v-for="(path, index) in svgData.green" :key="index" :d="path.d" :transform="path.transform" fill="#3ed59d" />
       <line v-for="(line, index) in svgData.lines" :key="index" :x1="line.x1" :y1="line.y1" :x2="line.x2" :y2="line.y2" fill="none" stroke="#111" stroke-width="1" stroke-dasharray="2 2" />
-      <g v-for="(circle, index) in svgData.circles" :key="index" :transform="`translate(${circle.x} ${circle.y})`" fill="#ff0955" stroke="#111" stroke-width="2">
+      <g
+        v-for="(circle, index) in svgData.circles"
+        :key="index"
+        :transform="`translate(${circle.x} ${circle.y})`"
+        :fill="circle.fill || '#ff0955'"
+        :stroke="circle.stroke || '#111'"
+        stroke-width="2"
+      >
         <circle cx="5" cy="5" r="5" stroke="none"/>
         <circle cx="5" cy="5" r="4" fill="none"/>
       </g>
