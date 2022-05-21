@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=450, user-scalable=no">
     <title>UXGolf</title>
     <link rel="Shortcut icon" href="favicon.ico" type="image/x-icon"/>
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json?v=VERSION">
+    <link rel="stylesheet" href="styles.css?v=VERSION">
   </head>
   <body>
     <div id="app"></div>
@@ -13,9 +13,9 @@
     <script type="importmap">
       {
         "imports": {
-          "dewep/uxgolf/app": "/app.js",
+          "dewep/uxgolf/app": "/app.js?v=VERSION",
           "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
-          "dewep/uxgolf/courses/pulnoy": "/courses/pulnoy.js"
+          "dewep/uxgolf/courses/pulnoy": "/courses/pulnoy.js?v=VERSION"
         }
       }
     </script>
@@ -24,7 +24,7 @@
       import uxgolfApp from 'dewep/uxgolf/app'
       import { createApp } from 'vue'
 
-      fetch('template.html')
+      fetch('template.html?v=VERSION')
         .then(response => response.text())
         .then(html => {
           document.querySelector('#app').innerHTML = html
