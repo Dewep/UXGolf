@@ -198,9 +198,11 @@ export default {
         })
       }
 
-      const currentPosition = this.gpsToPoint(a, b, c, this.currentPosLat, this.currentPosLng)
-      if (currentPosition) {
-        circles.push({ x: currentPosition.x - 5, y: currentPosition.y - 5, stroke: '#0E4706', fill: '#FFF' })
+      if (this.currentDistance < 600) {
+        const currentPosition = this.gpsToPoint(a, b, c, this.currentPosLat, this.currentPosLng)
+        if (currentPosition) {
+          circles.push({ x: currentPosition.x - 5, y: currentPosition.y - 5, stroke: '#0E4706', fill: '#FFF' })
+        }
       }
 
       return {

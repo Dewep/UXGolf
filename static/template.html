@@ -88,7 +88,7 @@
     </div>
   </section>
 
-  <section v-if="hole && currentSummary.net < 2" class="actions">
+  <section v-if="hole && currentSummary.net < 2 && currentDistance < 600" class="actions">
     <em>{{ currentDistance }}m</em>
     <a v-if="localMatch" :class="{ disabled: loading }" class="btn" @click="newStroke()">Add a new stroke</a>
   </section>
