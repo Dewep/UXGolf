@@ -7,7 +7,6 @@ Golf application for scoring your matches, with GPS positions.
 - Back, http-server
   - Serve courses
   - Authorization to save matches
-  - Return main match data (date, player, index)
   - Self generation of slug
 - Design
   - Icons
