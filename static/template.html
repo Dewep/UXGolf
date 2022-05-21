@@ -211,5 +211,6 @@
     <a class="btn" v-if="localMatch && !remoteMatch" @click.prevent="permanentlyDeleteMatch()">
       Permanently delete match
     </a>
+    <i v-if="remoteMatch">{{ remoteMatch.slug }}</i>
   </section>
 </template>

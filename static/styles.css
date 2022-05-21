@@ -273,6 +273,11 @@ section.export {
 section.export .btn {
   margin: 0 1rem;
 }
+section.export i {
+  display: block;
+  margin-top: 1rem;
+  font-size: 80%;
+}
 section.svg svg {
   width: 100%;
   max-height: 80vh;
