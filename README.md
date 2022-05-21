@@ -22,8 +22,10 @@ Golf application for scoring your matches, with GPS positions.
   - Do not display distance if too far away
   - Ensure better GPS position after phone pause/lock (wait few seconds?)
   - Selection start color in a second menu
-  - Server courses from back
+  - Serve courses from back
   - Try IndexedDb instead of LocalStorage
+  - Possibility to remove a stroke
+  - Mark the flag (manually, or maybe automatically from the possible positions of the course)
 - PWA
   - Improve manifests
   - Force to download PWA to use it
