@@ -28,8 +28,9 @@ export default {
         const course = this.coursesData.find(course => course.slug === match.course)
         const starter = course?.starters?.find(starter => starter.slug === match.starter)
         matches.push({
-          remote,
           slug: match.slug || match.date,
+          dateInstance: date,
+          remote,
           title: `${date} - ${match.player} (${match.index})`,
           subtitle: `${course?.name || 'N/A'} - ${starter?.name || 'N/A'} - ${match.strokes.length} strokes`
         })
@@ -44,6 +45,16 @@ export default {
           addMatch(match, true)
         }
       }
+
+      matches.sort((a, b) => {
+        if (a.dateInstance < b.dateInstance) {
+          return 1
+        }
+        if (a.dateInstance > b.dateInstance) {
+          return -1
+        }
+        return 0
+      })
 
       return matches
     },
