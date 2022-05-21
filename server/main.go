@@ -94,7 +94,7 @@ func listMatches (w http.ResponseWriter, r *http.Request) {
 
     matchSlug := match.Name()[:len(match.Name())-5]
 
-    jsonRow := fmt.Sprintf("{\"slug\":\"%s\",\"date\":\"%s\",\"player\":\"%s\",\"index\":%d,\"course\":\"%s\",\"starter\":\"%s\"},", matchSlug, matchData["date"], matchData["player"], matchData["index"], matchData["course"], matchData["starter"])
+    jsonRow := fmt.Sprintf("{\"slug\":\"%s\",\"date\":\"%s\",\"player\":\"%s\",\"index\":%d,\"course\":\"%s\",\"starter\":\"%s\"},", matchSlug, matchData["date"], matchData["player"], int(matchData["index"].(float64)), matchData["course"], matchData["starter"])
     w.Write([]byte(jsonRow))
   }
   w.Write([]byte("null]}")) // Null at the end, to simplify the JSON result
