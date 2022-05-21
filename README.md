@@ -14,7 +14,6 @@ Golf application for scoring your matches, with GPS positions.
   - Screenshots for GitHub Readme
 - Courses data
   - Pulnoy course SVG holes 10 to 18
-  - Fix reference position hole 7 Pulnoy
 - Front application
   - Update Player name + Index
   - Ensure better GPS position after phone pause/lock (wait few seconds?)
