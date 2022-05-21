@@ -134,6 +134,9 @@
             Lng
             <a @click.prevent="updateStrokeGps(stroke, 'lng', 1)">+</a>
           </span>
+          <span>
+            <a @click.prevent="removeStrokeGps(stroke)">x</a>
+          </span>
         </small>
       </li>
     </ol>

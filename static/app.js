@@ -424,6 +424,10 @@ export default {
       }
       this.saveLocalStorage()
     },
+    removeStrokeGps ({ date }) {
+      this.match.strokes = this.match.strokes.filter(stroke => stroke.date !== date)
+      this.saveLocalStorage()
+    },
     newStroke (lat = null, lng = null) {
       if (this.currentSummary.net >= 2) {
         return
