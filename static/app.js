@@ -514,6 +514,7 @@ export default {
 
         if (!this.localMatch.slug) {
           this.localMatch.slug = match.slug
+          this.matchSlug = match.slug
           this.saveLocalStorage()
         }
       } catch (error) {
