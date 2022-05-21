@@ -27,12 +27,17 @@ export default {
         const date = new Date(match.date).toLocaleString('fr-FR', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })
         const course = this.coursesData.find(course => course.slug === match.course)
         const starter = course?.starters?.find(starter => starter.slug === match.starter)
+        const subtitle = [
+          course?.name || 'N/A',
+          starter?.name || 'N/A',
+          match.strokes ? `${match.strokes.length} strokes` : null
+        ]
         matches.push({
           slug: match.slug || match.date,
           dateInstance: date,
           remote,
           title: `${date} - ${match.player} (${match.index})`,
-          subtitle: `${course?.name || 'N/A'} - ${starter?.name || 'N/A'} - ${match.strokes.length} strokes`
+          subtitle: subtitle.filter(part => part).join(' - ')
         })
       }
 
@@ -64,7 +69,7 @@ export default {
     },
     remoteMatch () {
       const remoteMatch = this.remoteMatches.find(match => match.slug === this.matchSlug)
-      if (remoteMatch && remoteMatch.course) {
+      if (remoteMatch && remoteMatch.strokes) {
         return remoteMatch
       }
       return null
@@ -261,21 +266,21 @@ export default {
 
         this.remoteMatches = []
 
-        for (const matchSlug of json.matches) {
-          if (!matchSlug) { // null at the end of the list
+        for (const match of json.matches) {
+          if (!match) { // null at the end of the list
             continue
           }
-          if (this.remoteMatches.find(match => match.slug === matchSlug)) {
+          if (this.remoteMatches.find(m => m.slug === match.slug)) {
             continue
           }
           this.remoteMatches.push({
-            slug: matchSlug,
-            date: window.atob(matchSlug),
-            player: 'Unknown',
-            index: 54,
-            course: null,
-            starter: null,
-            strokes: []
+            slug: match.slug,
+            date: match.date,
+            player: match.player,
+            index: match.index,
+            course: match.course,
+            starter: match.starter,
+            strokes: null
           })
         }
       } catch (error) {
@@ -372,6 +377,10 @@ export default {
       const px = x1 + a * dx
       const py = y1 + a * dy
       const h = Math.sqrt(r1 * r1 - a * a)
+
+      if (isNaN(h)) {
+        return null
+      }
 
       return {
         x1: px + h * dy,
