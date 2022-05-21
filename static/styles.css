@@ -189,13 +189,19 @@ section.details ol li small span {
   display: inline-block;
 }
 section.details ol li small span a {
-  background: #dce3da;
+  background: #27591e;
+  color: #fff;
   display: inline-block;
   width: 1.3rem;
   text-align: center;
   border-radius: 1rem;
   height: 1.3rem;
   font-weight: bold;
+}
+section.details a.btn {
+  padding: 0.1rem 2.4rem;
+  font-size: 0.7rem;
+  float: right;
 }
 section.summary-global {
   padding: 1rem 2rem;

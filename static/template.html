@@ -140,6 +140,14 @@
         </small>
       </li>
     </ol>
+    <a
+      v-if="currentSummary.net < 2 && localMatch"
+      :class="{ disabled: loading }"
+      class="btn"
+      @click="newStroke(currentHole.lat, currentHole.lng)"
+    >
+      Add a green stroke
+    </a>
   </section>
 
   <section v-if="!hole" class="summary-global">
