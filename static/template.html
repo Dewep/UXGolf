@@ -23,6 +23,10 @@
 </header>
 
 <section v-if="courseSelection" class="selection">
+  <span>
+    <label for="name">Player</label>
+    <input type="text" name="player" v-model="player" size="15" >
+  </span>
   <template v-for="courseItem in coursesData">
     <a v-for="starterItem in courseItem.starters" :key="courseItem.slug + '/' + starterItem.slug" @click.prevent="selectCourse(courseItem, starterItem)">
       <span class="icon icon-arrow-right"></span>
@@ -193,22 +197,22 @@
   </section>
 
   <section v-if="!hole" :class="{ disabled: loading }" class="export">
-    <a class="btn" v-if="!localMatch" @click.prevent="importRemoteMatch()">
+    <a class="btn menu-cta" v-if="!localMatch" @click.prevent="importRemoteMatch()">
       Import remote match
     </a>
-    <a class="btn" v-if="localMatch && !remoteMatch" @click.prevent="createRemoteMatch()">
+    <a class="btn menu-cta" v-if="localMatch && !remoteMatch" @click.prevent="createRemoteMatch()">
       Create remote match
     </a>
-    <a class="btn" v-if="localMatch && remoteMatch" @click.prevent="saveRemoteMatch()">
+    <a class="btn menu-cta" v-if="localMatch && remoteMatch" @click.prevent="saveRemoteMatch()">
       Save remote match
     </a>
-    <a class="btn" v-if="localMatch && remoteMatch" @click.prevent="restoreRemoteMatch()">
+    <a class="btn menu-cta" v-if="localMatch && remoteMatch" @click.prevent="restoreRemoteMatch()">
       Restore remote match
     </a>
-    <a class="btn" v-if="localMatch && remoteMatch" @click.prevent="removeLocalMatch()">
+    <a class="btn menu-cta" v-if="localMatch && remoteMatch" @click.prevent="removeLocalMatch()">
       Remove local match
     </a>
-    <a class="btn" v-if="localMatch && !remoteMatch" @click.prevent="permanentlyDeleteMatch()">
+    <a class="btn menu-cta" v-if="localMatch && !remoteMatch" @click.prevent="permanentlyDeleteMatch()">
       Permanently delete match
     </a>
     <i v-if="remoteMatch">{{ remoteMatch.slug }}</i>
