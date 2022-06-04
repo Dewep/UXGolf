@@ -754,6 +754,28 @@ const courses = [
       { slug: 'blue-men', name: 'Blue Men', sss: 67.6, slope: 125 },
       { slug: 'yellow-men', name: 'Yellow Men', sss: 69.6, slope: 129 }
     ]
+  },
+  {
+    slug: '54425-pulnoy-10-18t',
+    name: 'Nancy-Pulnoy 10-18T',
+    holes: [
+      { par: 4, hcp: 6, lat: 48.697245, lng: 6.264712, svg: pulnoySvg.hole10 },
+      { par: 4, hcp: 3, lat: 48.699767, lng: 6.265845, svg: pulnoySvg.hole11 },
+      { par: 5, hcp: 9, lat: 48.699211, lng: 6.270744, svg: pulnoySvg.hole12 },
+      { par: 3, hcp: 8, lat: 48.699482, lng: 6.268297, svg: pulnoySvg.hole13 },
+      { par: 4, hcp: 1, lat: 48.697221, lng: 6.267344, svg: pulnoySvg.hole14 },
+      { par: 4, hcp: 2, lat: 48.695829, lng: 6.263235, svg: pulnoySvg.hole15 },
+      { par: 3, hcp: 4, lat: 48.698640, lng: 6.262339, svg: pulnoySvg.hole16 },
+      { par: 4, hcp: 7, lat: 48.697132, lng: 6.262661, svg: pulnoySvg.hole17 },
+      { par: 5, hcp: 5, lat: 48.700283, lng: 6.264399, svg: pulnoySvg.hole18 }
+    ],
+    starters: [
+      { slug: 'orange-men', name: 'Orange Men', sss: 27, slope: 50 },
+      { slug: 'purple-men', name: 'Purple Men', sss: 32.5, slope: 63 },
+      { slug: 'red-men', name: 'Red Men', sss: 33.6, slope: 58 },
+      { slug: 'blue-men', name: 'Blue Men', sss: 34.2, slope: 59 },
+      { slug: 'yellow-men', name: 'Yellow Men', sss: 35.4, slope: 63 }
+    ]
   }
 ]
 
