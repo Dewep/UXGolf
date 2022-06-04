@@ -79,6 +79,9 @@ body {
   vertical-align: middle;
   white-space: nowrap;
 }
+.menu-cta {
+  margin: 1rem;
+}
 .btn:focus, .btn:hover, .btn:active, .btn.active {
   background: #0f4706cc;
 }

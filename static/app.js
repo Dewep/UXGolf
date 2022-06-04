@@ -13,6 +13,7 @@ export default {
 
       matchSlug: null,
       hole: null,
+      player: null,
 
       currentPosLat: 48.701195,
       currentPosLng: 6.264620
@@ -471,7 +472,7 @@ export default {
       } else {
         const match = {
           date: new Date().toISOString(),
-          player: 'Dewep',
+          player: this.player || 'Dewep',
           index: 54,
           course: course.slug,
           starter: starter.slug,
