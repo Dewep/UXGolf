@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  uxgolf:
+    image: golang:1.18
+    restart: always
+    volumes:
+      - .:/app
+    working_dir: /app/server
+    command: go run main.go
+    ports:
+      - "127.0.0.1:7860:7860"
