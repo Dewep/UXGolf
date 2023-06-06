@@ -25,7 +25,8 @@ export default {
       const matches = []
 
       const addMatch = (match, remote = false) => {
-        const date = new Date(match.date).toLocaleString('fr-FR', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })
+        const dateInstance = new Date(match.date)
+        const date = dateInstance.toLocaleString('fr-FR', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
         const course = this.coursesData.find(course => course.slug === match.course)
         const starter = course?.starters?.find(starter => starter.slug === match.starter)
         const subtitle = [
@@ -35,7 +36,7 @@ export default {
         ]
         matches.push({
           slug: match.slug || match.date,
-          dateInstance: date,
+          dateInstance,
           remote,
           title: `${date} - ${match.player} (${match.index})`,
           subtitle: subtitle.filter(part => part).join(' - ')
